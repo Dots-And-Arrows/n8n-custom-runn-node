@@ -48,6 +48,31 @@ async function getPersonId(
 	return personData.id;
 }
 
+// Helper: resolve an ID-or-name string to a numeric team ID.
+// If the input is numeric it is returned as-is; otherwise all teams are fetched
+// and the first team whose name matches (case-insensitive) is returned.
+async function getTeamId(
+	this: IExecuteFunctions,
+	idOrName: string,
+	runnApi: any,
+): Promise<number> {
+	if (!isNaN(Number(idOrName))) {
+		return Number(idOrName);
+	}
+
+	const teams = await runnApi.teams.fetchAll();
+	const team = teams.find((team: any) => team.name.toLowerCase() === idOrName.toLowerCase());
+	if (!team) {
+		throw new NodeOperationError(
+			this.getNode(),
+			`Team with name "${idOrName}" not found`,
+			{ description: 'Team not found' },
+		);
+	}
+
+	return team.id;
+}
+
 export class Runn implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Runn',
@@ -373,6 +398,7 @@ export class Runn implements INodeType {
 						const startDate = formatDate(this.getNodeParameter('startDate', i) as string);
 						const endDate = formatDate(this.getNodeParameter('endDate', i) as string);
 						const employmentType = this.getNodeParameter('employmentType', i) as string;
+						const teamIdInput = this.getNodeParameter('teamId', i) as string;
 						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
 
 						if (dryRun) {
@@ -393,6 +419,19 @@ export class Runn implements INodeType {
 									});
 								}
 								throw error;
+							}
+							if (teamIdInput) {
+								const resolvedTeamId = await getTeamId.call(this, teamIdInput, runnApi);
+								try {
+									await runnApi.people.addToTeam(responseData.id, resolvedTeamId);
+								} catch (error) {
+									if (error.response) {
+										throw new NodeOperationError(this.getNode(), error.response.data.message, {
+											description: error.response.status,
+										});
+									}
+									throw error;
+								}
 							}
 						}
 

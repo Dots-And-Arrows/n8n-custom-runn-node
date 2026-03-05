@@ -203,6 +203,19 @@ export const peopleFields: INodeProperties[] = [
 		default: '',
 		description: 'Role to assign to the person (supports both role ID and string)',
 	},
+  {
+		displayName: 'Team ID or Name',
+		name: 'teamId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['people'],
+				operation: ['createPerson'],
+			},
+		},
+		default: '',
+		description: 'ID or name of the team to add the person to after creation. If a name is provided, it is resolved to an ID by fetching all teams.',
+	},
 	{
 		displayName: 'Start Date',
 		name: 'startDate',
