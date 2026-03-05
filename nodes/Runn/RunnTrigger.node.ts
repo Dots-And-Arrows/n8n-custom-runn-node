@@ -256,14 +256,7 @@ export class RunnTrigger implements INodeType {
 				webhookData.lastCheck = lastCheck;
 
 				for (const itemMatched of resultItemsMatched) {
-					this.emit([
-						this.helpers.returnJsonArray({
-							trigger_resource_type: itemMatched.trigger_resource_type,
-							trigger_event_type: itemMatched.trigger_event_type,
-							trigger_link: itemMatched.trigger_link,
-							...itemMatched,
-						}),
-					]);
+					this.emit([this.helpers.returnJsonArray(itemMatched)]);
 				}
 			}
 		};

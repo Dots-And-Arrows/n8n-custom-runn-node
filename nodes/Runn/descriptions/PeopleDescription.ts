@@ -97,7 +97,7 @@ export const peopleFields: INodeProperties[] = [
 	},
 
 	// ----------------------------------------
-	//     people: createPerson / updatePerson
+	//         people: createPerson
 	// ----------------------------------------
 	{
 		displayName: 'First Name',
@@ -107,7 +107,7 @@ export const peopleFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['people'],
-				operation: ['createPerson', 'updatePerson'],
+				operation: ['createPerson'],
 			},
 		},
 		default: '',
@@ -121,7 +121,7 @@ export const peopleFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['people'],
-				operation: ['createPerson', 'updatePerson'],
+				operation: ['createPerson'],
 			},
 		},
 		default: '',
@@ -135,7 +135,51 @@ export const peopleFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['people'],
-				operation: ['createPerson', 'updatePerson'],
+				operation: ['createPerson'],
+			},
+		},
+		default: '',
+		description: 'Email of the person',
+	},
+
+	// ----------------------------------------
+	//         people: updatePerson
+	// ----------------------------------------
+	{
+		displayName: 'First Name',
+		name: 'firstName',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['people'],
+				operation: ['updatePerson'],
+			},
+		},
+		default: '',
+		description: 'First name of the person',
+	},
+	{
+		displayName: 'Last Name',
+		name: 'lastName',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['people'],
+				operation: ['updatePerson'],
+			},
+		},
+		default: '',
+		description: 'Last name of the person',
+	},
+	{
+		displayName: 'Email',
+		name: 'email',
+		type: 'string',
+		placeholder: 'name@email.com',
+		displayOptions: {
+			show: {
+				resource: ['people'],
+				operation: ['updatePerson'],
 			},
 		},
 		default: '',
@@ -158,6 +202,19 @@ export const peopleFields: INodeProperties[] = [
 		},
 		default: '',
 		description: 'Role to assign to the person (supports both role ID and string)',
+	},
+  {
+		displayName: 'Team ID or Name',
+		name: 'teamId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['people'],
+				operation: ['createPerson'],
+			},
+		},
+		default: '',
+		description: 'ID or name of the team to add the person to after creation. If a name is provided, it is resolved to an ID by fetching all teams.',
 	},
 	{
 		displayName: 'Start Date',

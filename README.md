@@ -1,1 +1,127 @@
-# n8n-custom-runn-node
+# n8n-nodes-runn
+
+This is an n8n community node. It lets you use the **Runn** API in your n8n workflows.
+
+Runn is a resource planning and project forecasting platform. This node allows you to manage people, projects, and clients, and react to changes in real time using the trigger node.
+
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
+
+[Installation](#installation) |
+[Operations](#operations) |
+[Credentials](#credentials) |
+[Compatibility](#compatibility) |
+[Usage](#usage) |
+[Resources](#resources) |
+[Version history](#version-history)
+
+## Installation
+
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Build before you run
+npm run build
+
+# Start n8n with the custom node loaded (recommended)
+npm run dev
+
+# Alternative: use globally installed n8n
+npm run dev:local
+```
+
+## Operations
+
+### People
+
+| Operation   | Description              |
+| ----------- | ------------------------ |
+| **Archive** | Archive a person         |
+| **Create**  | Create a new person      |
+| **Delete**  | Delete a person          |
+| **Get All** | Get all people           |
+| **Get One** | Get a single person      |
+| **Unarchive** | Unarchive a person     |
+| **Update**  | Update a person          |
+
+### Projects
+
+| Operation    | Description                |
+| ------------ | -------------------------- |
+| **Add Note** | Add a note to a project    |
+| **Archive**  | Archive a project          |
+| **Create**   | Create a new project       |
+| **Delete**   | Delete a project           |
+| **Get All**  | Get all projects           |
+| **Get One**  | Get a single project       |
+| **Unarchive** | Unarchive a project       |
+| **Update**   | Update a project           |
+
+### Clients
+
+| Operation     | Description           |
+| ------------- | --------------------- |
+| **Archive**   | Archive a client      |
+| **Create**    | Create a new client   |
+| **Get All**   | Get all clients       |
+| **Get One**   | Get a single client   |
+| **Unarchive** | Unarchive a client    |
+| **Update**    | Update a client       |
+
+### Runn Trigger
+
+The trigger node polls the Runn API and fires when records are created, updated, or deleted.
+
+**Resources:** People, Projects, Clients, Assignments, Actuals, Contracts, Users, Teams
+
+**Events:** Created, Updated, Deleted
+
+Each trigger output includes a `runnLink` field with a direct link to the changed record in the Runn app.
+
+## Credentials
+
+To use this node you need a Runn API key:
+
+| Field       | Description                                                                               |
+| ----------- | ----------------------------------------------------------------------------------------- |
+| **API Key** | Your Runn API key. Generate one in Runn under **Settings → API**. |
+
+The node authenticates using a `Bearer` token in the `Authorization` header.
+
+## Compatibility
+
+- Requires Node.js **v18** or higher
+- Uses the [`runn-api-client`](https://www.npmjs.com/package/runn-api-client) npm package
+
+## Usage
+
+1. Add the **Runn** node (or **Runn Trigger**) to your workflow
+2. Configure your Runn API credentials
+3. Select a resource (**People**, **Projects**, or **Clients**)
+4. Choose an operation
+5. Fill in the required parameters
+6. Execute the workflow
+
+**Tip:** Use the **Runn Trigger** node to automatically start workflows when records change in Runn — no webhooks required, it uses polling.
+
+## Resources
+
+- [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+- [Runn API documentation](https://developer.runn.io/reference/)
+- [How to generate a Runn API token](https://help.runn.io/en/articles/7039247-how-to-generate-an-api-token-in-runn)
+- [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
+
+## Version history
+
+### 1.0.0
+
+- Initial release
+- **People resource** with Archive, Create, Delete, Get All, Get One, Unarchive, and Update operations
+- **Projects resource** with Add Note, Archive, Create, Delete, Get All, Get One, Unarchive, and Update operations
+- **Clients resource** with Archive, Create, Get All, Get One, Unarchive, and Update operations
+- **Runn Trigger** node for polling-based event detection across all resources
+- Bearer token authentication with credential test
