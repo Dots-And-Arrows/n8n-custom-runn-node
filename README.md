@@ -117,6 +117,15 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 
 ## Version history
 
+### 1.0.1
+
+- Added **Team ID or Name** field to the People > Create operation — accepts either a numeric ID or a team name (resolved automatically)
+- Fixed credential test: corrected API base URL and added required headers so the green "Connection tested" badge now appears
+- Fixed `updatePerson`: First Name, Last Name, and Email are no longer required fields (partial updates now work)
+- Fixed trigger node: removed duplicate fields in trigger output
+- Fixed error handling: all write operations now handle network errors safely
+- Removed debug-level logging from production API calls
+
 ### 1.0.0
 
 - Initial release
