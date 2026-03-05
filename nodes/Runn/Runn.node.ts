@@ -129,9 +129,12 @@ export class Runn implements INodeType {
 						try {
 							responseData = await runnApi.clients.fetchOneById(id);
 						} catch (error) {
+							if (error.response) {
 							throw new NodeOperationError(this.getNode(), error.response.data.message, {
 								description: error.response.status,
 							});
+						}
+						throw error;
 						}
 
 					} else if (operation === 'createClient') {
@@ -221,9 +224,12 @@ export class Runn implements INodeType {
 						try {
 							responseData = await runnApi.projects.fetchOneById(id);
 						} catch (error) {
+							if (error.response) {
 							throw new NodeOperationError(this.getNode(), error.response.data.message, {
 								description: error.response.status,
 							});
+						}
+						throw error;
 						}
 
 					} else if (operation === 'createProject') {
@@ -381,7 +387,7 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.people.create(firstName, lastName, role, otherValues);
 							} catch (error) {
-								if (error.response && error.response.status !== 200) {
+								if (error.response) {
 									throw new NodeOperationError(this.getNode(), error.response.data.message, {
 										description: error.response.status,
 									});
@@ -411,7 +417,7 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.people.update(personId, updateValues);
 							} catch (error) {
-								if (error.response && error.response.status !== 200) {
+								if (error.response) {
 									throw new NodeOperationError(this.getNode(), error.response.data.message, {
 										description: error.response.status,
 									});

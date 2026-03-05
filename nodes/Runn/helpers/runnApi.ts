@@ -11,7 +11,6 @@ const RunnApiClient = require('runn-api-client');
 export async function getRunnApi(this: IExecuteFunctions | ITriggerFunctions) {
 	const credentials = await this.getCredentials('runnApi');
 	return new RunnApiClient(credentials.apiKey as string, {
-		logLevel: 'debug',
-		isDryRun: credentials.dryRun as boolean,
+		logLevel: 'error',
 	});
 }
