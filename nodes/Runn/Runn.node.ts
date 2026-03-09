@@ -12,6 +12,8 @@ import { getRunnApi } from './helpers/runnApi';
 import {
 	actualsOperations,
 	actualsFields,
+	assignmentsOperations,
+	assignmentsFields,
 	clientsOperations,
 	clientsFields,
 	projectsOperations,
@@ -23,7 +25,9 @@ import {
 // Helper: format a date string to YYYY-MM-DD
 function formatDate(dateString: string): string {
 	if (!dateString) return '';
-	return new Date(dateString).toISOString().split('T')[0];
+	// Slice the date portion directly to avoid UTC timezone shift.
+	// n8n datetime fields are always ISO strings starting with YYYY-MM-DD.
+	return dateString.substring(0, 10);
 }
 
 // Helper: resolve an ID-or-email string to a numeric person ID.
@@ -110,6 +114,11 @@ export class Runn implements INodeType {
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+						name: 'Assignments',
+						value: 'assignments',
+					},
+					{
+						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
 						name: 'Clients',
 						value: 'clients',
 					},
@@ -128,6 +137,8 @@ export class Runn implements INodeType {
 			},
 			...actualsOperations,
 			...actualsFields,
+			...assignmentsOperations,
+			...assignmentsFields,
 			...clientsOperations,
 			...clientsFields,
 			...projectsOperations,
@@ -219,6 +230,101 @@ export class Runn implements INodeType {
 						responseData = await runnApi.actuals.fetchAll({
 							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
 						});
+					}
+
+				// ============================================================
+				//                       ASSIGNMENTS
+				// ============================================================
+				} else if (resource === 'assignments') {
+
+					if (operation === 'createAssignment') {
+						const personId = this.getNodeParameter('personId', i) as number;
+						const projectId = this.getNodeParameter('projectId', i) as number;
+						const roleId = this.getNodeParameter('roleId', i) as number;
+						const startDate = formatDate(this.getNodeParameter('startDate', i) as string);
+						const endDate = formatDate(this.getNodeParameter('endDate', i) as string);
+						const minutesPerDay = this.getNodeParameter('minutesPerDay', i) as number;
+						const isBillable = this.getNodeParameter('isBillable', i) as boolean;
+						const isNonWorkingDay = this.getNodeParameter('isNonWorkingDay', i) as boolean;
+						const note = this.getNodeParameter('note', i) as string;
+						const phaseId = this.getNodeParameter('phaseId', i) as number;
+						const workstreamId = this.getNodeParameter('workstreamId', i) as number;
+						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
+
+						if (dryRun) {
+							responseData = { success: true, dry_run: true };
+						} else {
+							const body: Record<string, any> = {
+								personId,
+								projectId,
+								roleId,
+								startDate,
+								endDate,
+								minutesPerDay,
+								isBillable,
+								isNonWorkingDay,
+								...(note ? { note } : {}),
+								...(phaseId ? { phaseId } : {}),
+								...(workstreamId ? { workstreamId } : {}),
+							};
+							try {
+								responseData = await runnApi.executeRunnApiPOST('/assignments/', body);
+							} catch (error) {
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
+							}
+						}
+
+					} else if (operation === 'deleteAssignment') {
+						const assignmentId = this.getNodeParameter('assignmentId', i) as number;
+						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
+
+						if (dryRun) {
+							responseData = { success: true, dry_run: true };
+						} else {
+							try {
+								responseData = await runnApi.executeRunnApiDELETE(`/assignments/${assignmentId}/`);
+							} catch (error) {
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
+							}
+						}
+
+					} else if (operation === 'fetchAllAssignments') {
+						const onlyActive = this.getNodeParameter('onlyActive', i) as boolean;
+						const personId = this.getNodeParameter('personId', i) as number;
+						const projectId = this.getNodeParameter('projectId', i) as number;
+						const roleId = this.getNodeParameter('roleId', i) as number;
+						const startDate = formatDate(this.getNodeParameter('startDate', i) as string);
+						const endDate = formatDate(this.getNodeParameter('endDate', i) as string);
+						const modifiedAfter = this.getNodeParameter('modifiedAfter', i) as string;
+
+						const urlParams = {
+							...(personId ? { personId } : {}),
+							...(projectId ? { projectId } : {}),
+							...(roleId ? { roleId } : {}),
+							...(startDate ? { startDate } : {}),
+							...(endDate ? { endDate } : {}),
+							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
+						};
+
+						let assignments = await runnApi.executeRunnApiGET('/assignments', { urlParams });
+
+						if (onlyActive) {
+							assignments = assignments.filter(
+								(a: any) => a.isActive && !a.isPlaceholder && !a.isTemplate,
+							);
+						}
+
+						responseData = assignments;
 					}
 
 				// ============================================================
