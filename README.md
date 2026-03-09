@@ -44,6 +44,12 @@ npm run dev:local
 | **Delete**         | Delete an actual by ID                                                                              |
 | **Get All**        | Get all actuals, with an optional **Modified After** date filter                                    |
 
+### Assignments
+
+| Operation   | Description                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------- |
+| **Get All** | Get all assignments, with optional filters: Person ID, Project ID, Role ID, Start Date, End Date, Modified After, Only Active |
+
 ### People
 
 | Operation   | Description              |
@@ -109,7 +115,7 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 
 1. Add the **Runn** node (or **Runn Trigger**) to your workflow
 2. Configure your Runn API credentials
-3. Select a resource (**Actuals**, **Clients**, **People**, or **Projects**)
+3. Select a resource (**Actuals**, **Assignments**, **Clients**, **People**, or **Projects**)
 4. Choose an operation
 5. Fill in the required parameters
 6. Execute the workflow
@@ -124,6 +130,10 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
 
 ## Version history
+
+### 1.0.3
+
+- Added **Assignments resource** with Get All operation, supporting server-side filters (Person ID, Project ID, Role ID, Start Date, End Date, Modified After) and client-side Only Active filter
 
 ### 1.0.2
 

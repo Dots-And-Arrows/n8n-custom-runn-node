@@ -12,6 +12,8 @@ import { getRunnApi } from './helpers/runnApi';
 import {
 	actualsOperations,
 	actualsFields,
+	assignmentsOperations,
+	assignmentsFields,
 	clientsOperations,
 	clientsFields,
 	projectsOperations,
@@ -110,6 +112,11 @@ export class Runn implements INodeType {
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+						name: 'Assignments',
+						value: 'assignments',
+					},
+					{
+						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
 						name: 'Clients',
 						value: 'clients',
 					},
@@ -128,6 +135,8 @@ export class Runn implements INodeType {
 			},
 			...actualsOperations,
 			...actualsFields,
+			...assignmentsOperations,
+			...assignmentsFields,
 			...clientsOperations,
 			...clientsFields,
 			...projectsOperations,
@@ -219,6 +228,40 @@ export class Runn implements INodeType {
 						responseData = await runnApi.actuals.fetchAll({
 							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
 						});
+					}
+
+				// ============================================================
+				//                       ASSIGNMENTS
+				// ============================================================
+				} else if (resource === 'assignments') {
+
+					if (operation === 'fetchAllAssignments') {
+						const onlyActive = this.getNodeParameter('onlyActive', i) as boolean;
+						const personId = this.getNodeParameter('personId', i) as number;
+						const projectId = this.getNodeParameter('projectId', i) as number;
+						const roleId = this.getNodeParameter('roleId', i) as number;
+						const startDate = formatDate(this.getNodeParameter('startDate', i) as string);
+						const endDate = formatDate(this.getNodeParameter('endDate', i) as string);
+						const modifiedAfter = this.getNodeParameter('modifiedAfter', i) as string;
+
+						const urlParams = {
+							...(personId ? { personId } : {}),
+							...(projectId ? { projectId } : {}),
+							...(roleId ? { roleId } : {}),
+							...(startDate ? { startDate } : {}),
+							...(endDate ? { endDate } : {}),
+							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
+						};
+
+						let assignments = await runnApi.executeRunnApiGET('/assignments', { urlParams });
+
+						if (onlyActive) {
+							assignments = assignments.filter(
+								(a: any) => a.isActive && !a.isPlaceholder && !a.isTemplate,
+							);
+						}
+
+						responseData = assignments;
 					}
 
 				// ============================================================
