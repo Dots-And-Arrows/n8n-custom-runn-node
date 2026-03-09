@@ -279,6 +279,25 @@ export class Runn implements INodeType {
 							}
 						}
 
+					} else if (operation === 'deleteAssignment') {
+						const assignmentId = this.getNodeParameter('assignmentId', i) as number;
+						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
+
+						if (dryRun) {
+							responseData = { success: true, dry_run: true };
+						} else {
+							try {
+								responseData = await runnApi.executeRunnApiDELETE(`/assignments/${assignmentId}/`);
+							} catch (error) {
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
+							}
+						}
+
 					} else if (operation === 'fetchAllAssignments') {
 						const onlyActive = this.getNodeParameter('onlyActive', i) as boolean;
 						const personId = this.getNodeParameter('personId', i) as number;

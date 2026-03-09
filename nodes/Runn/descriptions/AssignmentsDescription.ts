@@ -21,6 +21,12 @@ export const assignmentsOperations: INodeProperties[] = [
 				action: 'Create an assignment',
 			},
 			{
+				name: 'Delete',
+				value: 'deleteAssignment',
+				description: 'Delete an assignment by ID',
+				action: 'Delete an assignment',
+			},
+			{
 				name: 'Get All',
 				value: 'fetchAllAssignments',
 				description: 'Get all assignments',
@@ -195,6 +201,37 @@ export const assignmentsFields: INodeProperties[] = [
 			show: {
 				resource: ['assignments'],
 				operation: ['createAssignment'],
+			},
+		},
+		description: 'Whether no actual changes will be made to your Runn account. When enabled, it will only simulate the operation.',
+	},
+
+	// ----------------------------------------
+	//     assignments: deleteAssignment
+	// ----------------------------------------
+	{
+		displayName: 'Assignment ID',
+		name: 'assignmentId',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['deleteAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the assignment to delete',
+	},
+	{
+		displayName: 'Dry Run',
+		name: 'dryRun',
+		type: 'boolean',
+		default: false,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['deleteAssignment'],
 			},
 		},
 		description: 'Whether no actual changes will be made to your Runn account. When enabled, it will only simulate the operation.',

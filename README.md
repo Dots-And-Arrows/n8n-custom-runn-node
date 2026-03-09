@@ -49,6 +49,7 @@ npm run dev:local
 | Operation   | Description                                                                                                     |
 | ----------- | --------------------------------------------------------------------------------------------------------------- |
 | **Create**  | Create a new assignment. Required: Person ID, Project ID, Role ID, Start Date, End Date, Minutes Per Day. Optional: Billable, Include Non-Working Days, Note, Phase ID, Workstream ID |
+| **Delete**  | Delete an assignment by ID                                                                          |
 | **Get All** | Get all assignments, with optional filters: Person ID, Project ID, Role ID, Start Date, End Date, Modified After, Only Active |
 
 ### People
@@ -131,6 +132,11 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
 
 ## Version history
+
+### 1.0.5
+
+- Added **Delete** operation to Assignments resource
+- Fixed date timezone bug: dates no longer shift by one day for users in timezones ahead of UTC
 
 ### 1.0.4
 
