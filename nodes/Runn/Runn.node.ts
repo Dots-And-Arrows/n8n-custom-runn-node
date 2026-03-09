@@ -10,6 +10,8 @@ import {
 
 import { getRunnApi } from './helpers/runnApi';
 import {
+	actualsOperations,
+	actualsFields,
 	clientsOperations,
 	clientsFields,
 	projectsOperations,
@@ -103,6 +105,11 @@ export class Runn implements INodeType {
 				options: [
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+						name: 'Actuals',
+						value: 'actuals',
+					},
+					{
+						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
 						name: 'Clients',
 						value: 'clients',
 					},
@@ -119,6 +126,8 @@ export class Runn implements INodeType {
 				],
 				default: 'people',
 			},
+			...actualsOperations,
+			...actualsFields,
 			...clientsOperations,
 			...clientsFields,
 			...projectsOperations,
@@ -141,9 +150,81 @@ export class Runn implements INodeType {
 				let responseData: any;
 
 				// ============================================================
+				//                         ACTUALS
+				// ============================================================
+				if (resource === 'actuals') {
+
+					if (operation === 'createOrUpdateActual') {
+						const date = formatDate(this.getNodeParameter('date', i) as string);
+						const personId = this.getNodeParameter('personId', i) as number;
+						const projectId = this.getNodeParameter('projectId', i) as number;
+						const roleId = this.getNodeParameter('roleId', i) as number;
+						const billableMinutes = this.getNodeParameter('billableMinutes', i) as number;
+						const nonbillableMinutes = this.getNodeParameter('nonbillableMinutes', i) as number;
+						const billableNote = this.getNodeParameter('billableNote', i) as string;
+						const nonbillableNote = this.getNodeParameter('nonbillableNote', i) as string;
+						const phaseId = this.getNodeParameter('phaseId', i) as number;
+						const workstreamId = this.getNodeParameter('workstreamId', i) as number;
+						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
+
+						if (dryRun) {
+							responseData = { success: true, dry_run: true };
+						} else {
+							const body = {
+								date,
+								personId,
+								projectId,
+								roleId,
+								billableMinutes,
+								nonbillableMinutes,
+								...(billableNote ? { billableNote } : {}),
+								...(nonbillableNote ? { nonbillableNote } : {}),
+								...(phaseId ? { phaseId } : {}),
+								...(workstreamId ? { workstreamId } : {}),
+							};
+							try {
+								responseData = await runnApi.executeRunnApiPOST('/actuals/', body);
+							} catch (error) {
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
+							}
+						}
+
+					} else if (operation === 'deleteActual') {
+						const actualId = this.getNodeParameter('actualId', i) as number;
+						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
+
+						if (dryRun) {
+							responseData = { success: true, dry_run: true };
+						} else {
+							try {
+								await runnApi.executeRunnApiDELETE(`/actuals/${actualId}/`);
+								responseData = { success: true, actualId };
+							} catch (error) {
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
+							}
+						}
+
+					} else if (operation === 'fetchAllActuals') {
+						const modifiedAfter = this.getNodeParameter('modifiedAfter', i) as string;
+						responseData = await runnApi.actuals.fetchAll({
+							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
+						});
+					}
+
+				// ============================================================
 				//                         CLIENTS
 				// ============================================================
-				if (resource === 'clients') {
+				} else if (resource === 'clients') {
 
 					if (operation === 'fetchAllClients') {
 						const onlyActive = this.getNodeParameter('onlyActive', i) as boolean;

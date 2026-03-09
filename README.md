@@ -36,6 +36,14 @@ npm run dev:local
 
 ## Operations
 
+### Actuals
+
+| Operation          | Description                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| **Create or Update** | Create or update an actual. Overwrites any existing actual for the same date, person, project, role, and workstream. |
+| **Delete**         | Delete an actual by ID                                                                              |
+| **Get All**        | Get all actuals, with an optional **Modified After** date filter                                    |
+
 ### People
 
 | Operation   | Description              |
@@ -101,7 +109,7 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 
 1. Add the **Runn** node (or **Runn Trigger**) to your workflow
 2. Configure your Runn API credentials
-3. Select a resource (**People**, **Projects**, or **Clients**)
+3. Select a resource (**Actuals**, **Clients**, **People**, or **Projects**)
 4. Choose an operation
 5. Fill in the required parameters
 6. Execute the workflow
@@ -116,6 +124,10 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
 
 ## Version history
+
+### 1.0.2
+
+- Added **Actuals resource** with Create or Update, Delete, and Get All operations
 
 ### 1.0.1
 
