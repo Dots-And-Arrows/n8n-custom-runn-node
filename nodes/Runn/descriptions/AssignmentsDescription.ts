@@ -15,6 +15,12 @@ export const assignmentsOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Create',
+				value: 'createAssignment',
+				description: 'Create a new assignment',
+				action: 'Create an assignment',
+			},
+			{
 				name: 'Get All',
 				value: 'fetchAllAssignments',
 				description: 'Get all assignments',
@@ -25,6 +31,175 @@ export const assignmentsOperations: INodeProperties[] = [
 ];
 
 export const assignmentsFields: INodeProperties[] = [
+	// ----------------------------------------
+	//     assignments: createAssignment
+	// ----------------------------------------
+	{
+		displayName: 'Person ID',
+		name: 'personId',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the person to assign',
+	},
+	{
+		displayName: 'Project ID',
+		name: 'projectId',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the project to assign the person to',
+	},
+	{
+		displayName: 'Role ID',
+		name: 'roleId',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the role the person will have on the project',
+	},
+	{
+		displayName: 'Start Date',
+		name: 'startDate',
+		type: 'dateTime',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'Start date of the assignment (YYYY-MM-DD)',
+	},
+	{
+		displayName: 'End Date',
+		name: 'endDate',
+		type: 'dateTime',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'End date of the assignment (YYYY-MM-DD)',
+	},
+	{
+		displayName: 'Minutes Per Day',
+		name: 'minutesPerDay',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: 0,
+		description: 'Number of minutes per day for this assignment',
+		typeOptions: {
+			minValue: 0,
+		},
+	},
+	{
+		displayName: 'Billable (Optional)',
+		name: 'isBillable',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: true,
+		description: 'Whether the assignment is billable',
+	},
+	{
+		displayName: 'Include Non-Working Days (Optional)',
+		name: 'isNonWorkingDay',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: false,
+		description: 'Whether to include non-working days in the assignment',
+	},
+	{
+		displayName: 'Note (Optional)',
+		name: 'note',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'A note about this assignment',
+	},
+	{
+		displayName: 'Phase ID (Optional)',
+		name: 'phaseId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the phase this assignment belongs to',
+	},
+	{
+		displayName: 'Workstream ID (Optional)',
+		name: 'workstreamId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		default: '',
+		description: 'ID of the workstream this assignment belongs to',
+	},
+	{
+		displayName: 'Dry Run',
+		name: 'dryRun',
+		type: 'boolean',
+		default: false,
+		displayOptions: {
+			show: {
+				resource: ['assignments'],
+				operation: ['createAssignment'],
+			},
+		},
+		description: 'Whether no actual changes will be made to your Runn account. When enabled, it will only simulate the operation.',
+	},
+
 	// ----------------------------------------
 	//     assignments: fetchAllAssignments
 	// ----------------------------------------
