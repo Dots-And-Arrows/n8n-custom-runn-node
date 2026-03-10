@@ -197,7 +197,7 @@ export class Runn implements INodeType {
 								responseData = await runnApi.executeRunnApiPOST('/actuals/', body);
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -217,7 +217,7 @@ export class Runn implements INodeType {
 								responseData = { success: true, actualId };
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -271,7 +271,7 @@ export class Runn implements INodeType {
 								responseData = await runnApi.executeRunnApiPOST('/assignments/', body);
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -290,7 +290,7 @@ export class Runn implements INodeType {
 								responseData = await runnApi.executeRunnApiDELETE(`/assignments/${assignmentId}/`);
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -342,11 +342,11 @@ export class Runn implements INodeType {
 							responseData = await runnApi.clients.fetchOneById(id);
 						} catch (error) {
 							if (error.response) {
-							throw new NodeOperationError(this.getNode(), error.response.data.message, {
-								description: error.response.status,
-							});
-						}
-						throw error;
+								throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+									description: error.response.status,
+								});
+							}
+							throw error;
 						}
 
 					} else if (operation === 'createClient') {
@@ -361,9 +361,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.clients.create(name, [], otherValues);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -383,9 +386,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.clients.update(id, otherValues);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -399,9 +405,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.clients.archive(id);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -415,9 +424,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.clients.unarchive(id);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 					}
@@ -437,11 +449,11 @@ export class Runn implements INodeType {
 							responseData = await runnApi.projects.fetchOneById(id);
 						} catch (error) {
 							if (error.response) {
-							throw new NodeOperationError(this.getNode(), error.response.data.message, {
-								description: error.response.status,
-							});
-						}
-						throw error;
+								throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+									description: error.response.status,
+								});
+							}
+							throw error;
 						}
 
 					} else if (operation === 'createProject') {
@@ -465,9 +477,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.create(name, clientId, otherValues);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -491,9 +506,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.update(id, otherValues);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -508,9 +526,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.addNote(id, note);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -524,9 +545,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.archive(id);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -540,9 +564,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.unarchive(id);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -556,9 +583,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.projects.delete(id);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 					}
@@ -601,7 +631,7 @@ export class Runn implements INodeType {
 								responseData = await runnApi.people.create(firstName, lastName, role, otherValues);
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -613,7 +643,7 @@ export class Runn implements INodeType {
 									await runnApi.people.addToTeam(responseData.id, resolvedTeamId);
 								} catch (error) {
 									if (error.response) {
-										throw new NodeOperationError(this.getNode(), error.response.data.message, {
+										throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 											description: error.response.status,
 										});
 									}
@@ -644,7 +674,7 @@ export class Runn implements INodeType {
 								responseData = await runnApi.people.update(personId, updateValues);
 							} catch (error) {
 								if (error.response) {
-									throw new NodeOperationError(this.getNode(), error.response.data.message, {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
 										description: error.response.status,
 									});
 								}
@@ -663,9 +693,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.people.archive(personId);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -680,9 +713,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.people.unarchive(personId);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 
@@ -697,9 +733,12 @@ export class Runn implements INodeType {
 							try {
 								responseData = await runnApi.people.delete(personId);
 							} catch (error) {
-								throw new NodeOperationError(this.getNode(), error.response.data.message, {
-									description: error.response.status,
-								});
+								if (error.response) {
+									throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
+										description: error.response.status,
+									});
+								}
+								throw error;
 							}
 						}
 					}
