@@ -1,5 +1,17 @@
 /* eslint-disable n8n-nodes-base/node-filename-against-convention */
 
+/**
+ * Main action node for the Runn integration.
+ *
+ * Supports five resources: Actuals, Assignments, Clients, People, and Projects.
+ * All execute() logic lives inline in this file — one if/else branch per resource,
+ * then one per operation within that resource.
+ *
+ * Description arrays (field definitions) are imported from descriptions/ and spread
+ * into the properties array. Execute logic reads those same field values at runtime
+ * using this.getNodeParameter().
+ */
+
 import {
 	IExecuteFunctions,
 	INodeExecutionData,
@@ -149,6 +161,7 @@ export class Runn implements INodeType {
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		// items = all input rows passed into this node (one per workflow item)
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 		const resource = this.getNodeParameter('resource', 0) as string;
@@ -156,6 +169,9 @@ export class Runn implements INodeType {
 
 		const runnApi = await getRunnApi.call(this);
 
+		// Process each input item independently.
+		// The outer try/catch handles continueOnFail — if enabled, errors are captured
+		// per item and execution continues instead of stopping the whole workflow.
 		for (let i = 0; i < items.length; i++) {
 			try {
 				let responseData: any;
@@ -166,6 +182,8 @@ export class Runn implements INodeType {
 				if (resource === 'actuals') {
 
 					if (operation === 'createOrUpdateActual') {
+						// Uses POST /actuals/ — creates a new actual or overwrites an existing one
+						// for the same combination of date + person + project + role + workstream.
 						const date = formatDate(this.getNodeParameter('date', i) as string);
 						const personId = this.getNodeParameter('personId', i) as number;
 						const projectId = this.getNodeParameter('projectId', i) as number;
@@ -178,6 +196,8 @@ export class Runn implements INodeType {
 						const workstreamId = this.getNodeParameter('workstreamId', i) as number;
 						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
 
+						// When dryRun is true, skip the API call entirely and return a placeholder.
+						// This lets users validate workflow logic without making real changes.
 						if (dryRun) {
 							responseData = { success: true, dry_run: true };
 						} else {
@@ -206,6 +226,7 @@ export class Runn implements INodeType {
 						}
 
 					} else if (operation === 'deleteActual') {
+						// DELETE /actuals/{id}/ returns 204 No Content, so we set an explicit response.
 						const actualId = this.getNodeParameter('actualId', i) as number;
 						const dryRun = this.getNodeParameter('dryRun', i) as boolean;
 
@@ -299,6 +320,9 @@ export class Runn implements INodeType {
 						}
 
 					} else if (operation === 'fetchAllAssignments') {
+						// Server-side filters (personId, projectId, etc.) are sent as URL params.
+						// onlyActive is applied client-side after fetching because the API does
+						// not expose that filter directly.
 						const onlyActive = this.getNodeParameter('onlyActive', i) as boolean;
 						const personId = this.getNodeParameter('personId', i) as number;
 						const projectId = this.getNodeParameter('projectId', i) as number;
@@ -603,6 +627,7 @@ export class Runn implements INodeType {
 						responseData = await runnApi.people.fetchAll({ onlyActive });
 
 					} else if (operation === 'fetchPerson') {
+						// getPersonId resolves an email address to a numeric ID if needed.
 						const idOrEmail = this.getNodeParameter('idOrEmail', i) as string;
 						const personId = await getPersonId.call(this, idOrEmail, runnApi);
 						responseData = await runnApi.people.fetchOneById(personId);
@@ -637,6 +662,8 @@ export class Runn implements INodeType {
 								}
 								throw error;
 							}
+							// Team assignment is a separate API call made after person creation.
+							// getTeamId accepts a numeric ID or a team name and resolves it.
 							if (teamIdInput) {
 								const resolvedTeamId = await getTeamId.call(this, teamIdInput, runnApi);
 								try {
@@ -744,6 +771,7 @@ export class Runn implements INodeType {
 					}
 				}
 
+				// Attach the result to the output, linked back to the originating input item.
 				returnData.push({ json: responseData, pairedItem: { item: i } });
 
 			} catch (error) {

@@ -1,3 +1,8 @@
+/**
+ * Field and operation definitions for the Actuals resource.
+ * Exports actualsOperations (the operation dropdown) and actualsFields (all input fields).
+ * Each field uses displayOptions to show only for the correct resource + operation combination.
+ */
 import { INodeProperties } from 'n8n-workflow';
 
 export const actualsOperations: INodeProperties[] = [

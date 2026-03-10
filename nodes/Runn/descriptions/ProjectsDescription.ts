@@ -1,3 +1,8 @@
+/**
+ * Field and operation definitions for the Projects resource.
+ * Exports projectsOperations (the operation dropdown) and projectsFields (all input fields).
+ * Each field uses displayOptions to show only for the correct resource + operation combination.
+ */
 import { INodeProperties } from 'n8n-workflow';
 
 export const projectsOperations: INodeProperties[] = [

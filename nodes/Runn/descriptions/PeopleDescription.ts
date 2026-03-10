@@ -1,3 +1,8 @@
+/**
+ * Field and operation definitions for the People resource.
+ * Exports peopleOperations (the operation dropdown) and peopleFields (all input fields).
+ * Each field uses displayOptions to show only for the correct resource + operation combination.
+ */
 import { INodeProperties } from 'n8n-workflow';
 
 export const peopleOperations: INodeProperties[] = [
