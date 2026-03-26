@@ -1,4 +1,5 @@
 import {
+	IDataObject,
 	INodeType,
 	INodeTypeDescription,
 	ITriggerFunctions,
@@ -47,11 +48,11 @@ export class RunnTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Runn Trigger',
 		name: 'runnTrigger',
-		// eslint-disable-next-line n8n-nodes-base/node-class-description-icon-not-svg
-		icon: 'file:runn.png',
+		icon: 'file:runn-io.svg',
 		group: ['trigger'],
 		version: 1,
 		description: 'Starts the workflow when Runn events occur',
+		usableAsTool: true,
 		defaults: {
 			name: 'When Runn events occur',
 		},
@@ -149,7 +150,7 @@ export class RunnTrigger implements INodeType {
 
 		// Poll Runn for new or changed records
 		const checkRunnForUpdates = async () => {
-			const resultItemsMatched: any[] = [];
+			const resultItemsMatched: IDataObject[] = [];
 
 			// ----------------------------------------
 			//    Check created / updated events
@@ -157,30 +158,30 @@ export class RunnTrigger implements INodeType {
 			if (events.includes(EVENTS.CREATED) || events.includes(EVENTS.UPDATED)) {
 				const checkForUpdates = async (
 					resourceType: RunnTriggerResource,
-					fetchFunction: (params?: any) => Promise<any[]>,
+					fetchFunction: (params?: Record<string, unknown>) => Promise<IDataObject[]>,
 				) => {
 					const items = await fetchFunction({
 						modifiedAfter: new Date(lastCheck).toISOString().substring(0, 19) + 'Z',
 					});
 
-					const itemsMatching = items.filter((item: any) => {
+					const itemsMatching = items.filter((item) => {
 						let condition = false;
 
 						if (events.includes(EVENTS.CREATED)) {
 							item.trigger_event_type = EVENTS.CREATED;
-							condition = condition || new Date(item.createdAt).getTime() > new Date(lastCheck).getTime();
+							condition = condition || new Date(item.createdAt as string).getTime() > new Date(lastCheck).getTime();
 						}
 
 						if (!condition && events.includes(EVENTS.UPDATED)) {
 							item.trigger_event_type = EVENTS.UPDATED;
-							condition = condition || new Date(item.updatedAt).getTime() > new Date(lastCheck).getTime();
+							condition = condition || new Date(item.updatedAt as string).getTime() > new Date(lastCheck).getTime();
 						}
 
-						item.trigger_link = formatRunnLink(resourceType, item);
+						item.trigger_link = formatRunnLink(resourceType, item as { id?: string; personId?: string });
 						return condition;
 					});
 
-					return itemsMatching.map((item: any) => ({
+					return itemsMatching.map((item) => ({
 						trigger_resource_type: resourceType,
 						trigger_event_type: item.trigger_event_type,
 						trigger_link: item.trigger_link,
@@ -233,12 +234,13 @@ export class RunnTrigger implements INodeType {
 					};
 
 					resultItemsMatched.push(
-						...activityItems.map((item: any) => {
-							const triggerResource = resourceTypeMap[item.type] ?? item.type;
+						...activityItems.map((item: IDataObject) => {
+							const itemType = item.type as string;
+							const triggerResource = resourceTypeMap[itemType] ?? itemType;
 							return {
 								trigger_event_type: EVENTS.DELETED,
 								trigger_resource_type: triggerResource,
-								trigger_link: formatRunnLink(triggerResource as RunnTriggerResource, item),
+								trigger_link: formatRunnLink(triggerResource as RunnTriggerResource, item as { id?: string; personId?: string }),
 								...item,
 							};
 						}),
@@ -261,12 +263,14 @@ export class RunnTrigger implements INodeType {
 			}
 		};
 
+		// eslint-disable-next-line @n8n/community-nodes/no-restricted-globals
 		const pollTimer = setInterval(async () => {
 			await checkRunnForUpdates();
 		}, pollInterval * 60 * 1000);
 
 		return {
 			closeFunction: async () => {
+				// eslint-disable-next-line @n8n/community-nodes/no-restricted-globals
 				clearInterval(pollTimer);
 			},
 		};

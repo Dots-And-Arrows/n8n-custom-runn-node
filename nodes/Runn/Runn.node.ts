@@ -13,6 +13,7 @@
  */
 
 import {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
@@ -28,6 +29,8 @@ import {
 	assignmentsFields,
 	clientsOperations,
 	clientsFields,
+	contractsOperations,
+	contractsFields,
 	projectsOperations,
 	projectsFields,
 	peopleOperations,
@@ -48,7 +51,7 @@ function formatDate(dateString: string): string {
 async function getPersonId(
 	this: IExecuteFunctions,
 	idOrEmail: string,
-	runnApi: any,
+	runnApi: Awaited<ReturnType<typeof getRunnApi>>,
 ): Promise<string> {
 	if (!isNaN(Number(idOrEmail))) {
 		return idOrEmail;
@@ -72,14 +75,14 @@ async function getPersonId(
 async function getTeamId(
 	this: IExecuteFunctions,
 	idOrName: string,
-	runnApi: any,
+	runnApi: Awaited<ReturnType<typeof getRunnApi>>,
 ): Promise<number> {
 	if (!isNaN(Number(idOrName))) {
 		return Number(idOrName);
 	}
 
 	const teams = await runnApi.teams.fetchAll();
-	const team = teams.find((team: any) => team.name.toLowerCase() === idOrName.toLowerCase());
+	const team = teams.find((team: { id: number; name: string }) => team.name.toLowerCase() === idOrName.toLowerCase());
 	if (!team) {
 		throw new NodeOperationError(
 			this.getNode(),
@@ -95,12 +98,12 @@ export class Runn implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Runn',
 		name: 'runn',
-		// eslint-disable-next-line n8n-nodes-base/node-class-description-icon-not-svg
-		icon: 'file:runn.png',
+		icon: 'file:runn-io.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Interact with Runn.io API',
+		usableAsTool: true,
 		defaults: {
 			name: 'Runn',
 		},
@@ -136,6 +139,11 @@ export class Runn implements INodeType {
 					},
 					{
 						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+						name: 'Contracts',
+						value: 'contracts',
+					},
+					{
+						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
 						name: 'People',
 						value: 'people',
 					},
@@ -153,6 +161,8 @@ export class Runn implements INodeType {
 			...assignmentsFields,
 			...clientsOperations,
 			...clientsFields,
+			...contractsOperations,
+			...contractsFields,
 			...projectsOperations,
 			...projectsFields,
 			...peopleOperations,
@@ -174,7 +184,7 @@ export class Runn implements INodeType {
 		// per item and execution continues instead of stopping the whole workflow.
 		for (let i = 0; i < items.length; i++) {
 			try {
-				let responseData: any;
+				let responseData: IDataObject | IDataObject[] = {};
 
 				// ============================================================
 				//                         ACTUALS
@@ -275,7 +285,7 @@ export class Runn implements INodeType {
 						if (dryRun) {
 							responseData = { success: true, dry_run: true };
 						} else {
-							const body: Record<string, any> = {
+							const body: Record<string, unknown> = {
 								personId,
 								projectId,
 								roleId,
@@ -344,7 +354,8 @@ export class Runn implements INodeType {
 
 						if (onlyActive) {
 							assignments = assignments.filter(
-								(a: any) => a.isActive && !a.isPlaceholder && !a.isTemplate,
+								(a: { isActive: boolean; isPlaceholder: boolean; isTemplate: boolean }) =>
+									a.isActive && !a.isPlaceholder && !a.isTemplate,
 							);
 						}
 
@@ -456,6 +467,25 @@ export class Runn implements INodeType {
 								throw error;
 							}
 						}
+					}
+
+				// ============================================================
+				//                        CONTRACTS
+				// ============================================================
+				} else if (resource === 'contracts') {
+
+					if (operation === 'fetchAllContracts') {
+						const modifiedAfter = this.getNodeParameter('modifiedAfter', i) as string;
+						const sortBy = this.getNodeParameter('sortBy', i) as string;
+						const order = this.getNodeParameter('order', i) as string;
+
+						const urlParams = {
+							sortBy,
+							order,
+							...(modifiedAfter ? { modifiedAfter: new Date(modifiedAfter).toISOString() } : {}),
+						};
+
+						responseData = await runnApi.executeRunnApiGET('/contracts/', { urlParams });
 					}
 
 				// ============================================================
@@ -667,7 +697,7 @@ export class Runn implements INodeType {
 							if (teamIdInput) {
 								const resolvedTeamId = await getTeamId.call(this, teamIdInput, runnApi);
 								try {
-									await runnApi.people.addToTeam(responseData.id, resolvedTeamId);
+									await runnApi.people.addToTeam((responseData as IDataObject).id, resolvedTeamId);
 								} catch (error) {
 									if (error.response) {
 										throw new NodeOperationError(this.getNode(), error.response.data?.message ?? error.message, {
@@ -772,7 +802,7 @@ export class Runn implements INodeType {
 				}
 
 				// Attach the result to the output, linked back to the originating input item.
-				returnData.push({ json: responseData, pairedItem: { item: i } });
+				returnData.push({ json: responseData as IDataObject, pairedItem: { item: i } });
 
 			} catch (error) {
 				if (this.continueOnFail()) {
