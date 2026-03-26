@@ -88,6 +88,12 @@ npm run dev:local
 | **Unarchive** | Unarchive a client    |
 | **Update**    | Update a client       |
 
+### Contracts
+
+| Operation   | Description                                                                                                    |
+| ----------- | -------------------------------------------------------------------------------------------------------------- |
+| **Get All** | Get all contracts, with optional filters: Modified After, Sort By (id / createdAt / updatedAt), Order (asc / desc) |
+
 ### Runn Trigger
 
 The trigger node polls the Runn API and fires when records are created, updated, or deleted.
@@ -117,7 +123,7 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 
 1. Add the **Runn** node (or **Runn Trigger**) to your workflow
 2. Configure your Runn API credentials
-3. Select a resource (**Actuals**, **Assignments**, **Clients**, **People**, or **Projects**)
+3. Select a resource (**Actuals**, **Assignments**, **Clients**, **Contracts**, **People**, or **Projects**)
 4. Choose an operation
 5. Fill in the required parameters
 6. Execute the workflow
@@ -132,6 +138,10 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
 
 ## Version history
+
+### 1.0.6
+
+- Added **Contracts resource** with Get All operation (GET `/contracts/`), supporting optional filters: Modified After, Sort By, and Order
 
 ### 1.0.5
 

@@ -22,6 +22,7 @@ n8n-nodes-runn-main/
 │       ├── ActualsDescription.ts     actualsOperations + actualsFields
 │       ├── AssignmentsDescription.ts assignmentsOperations + assignmentsFields
 │       ├── ClientsDescription.ts     clientsOperations + clientsFields
+│       ├── ContractsDescription.ts   contractsOperations + contractsFields
 │       ├── PeopleDescription.ts      peopleOperations + peopleFields
 │       └── ProjectsDescription.ts    projectsOperations + projectsFields
 ├── types/
@@ -131,7 +132,7 @@ Two layers of try/catch wrap every item:
 // Outer — handles continueOnFail per item
 for (let i = 0; i < items.length; i++) {
   try {
-    let responseData: any;
+    let responseData: IDataObject | IDataObject[] = {};
 
     // Inner — converts API errors into readable NodeOperationErrors
     try {
@@ -181,10 +182,10 @@ Never use `new Date(dateString).toISOString().split('T')[0]` — this converts t
 Fields that accept either a numeric ID or a human-readable name use a helper:
 
 ```typescript
-async function getTeamId(this: IExecuteFunctions, idOrName: string, runnApi: any): Promise<number> {
+async function getTeamId(this: IExecuteFunctions, idOrName: string, runnApi: Awaited<ReturnType<typeof getRunnApi>>): Promise<number> {
   if (!isNaN(Number(idOrName))) return Number(idOrName); // already an ID
   const teams = await runnApi.teams.fetchAll();
-  const team = teams.find((t: any) => t.name.toLowerCase() === idOrName.toLowerCase());
+  const team = teams.find((t: { id: number; name: string }) => t.name.toLowerCase() === idOrName.toLowerCase());
   if (!team) throw new NodeOperationError(this.getNode(), `Team "${idOrName}" not found`);
   return team.id;
 }

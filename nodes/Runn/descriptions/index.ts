@@ -3,5 +3,6 @@
 export * from './ActualsDescription';
 export * from './AssignmentsDescription';
 export * from './ClientsDescription';
+export * from './ContractsDescription';
 export * from './PeopleDescription';
 export * from './ProjectsDescription';
