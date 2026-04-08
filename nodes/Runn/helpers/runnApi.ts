@@ -1,5 +1,6 @@
 import { IExecuteFunctions, ITriggerFunctions } from 'n8n-workflow';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @n8n/community-nodes/no-restricted-imports
 const RunnApiClient = require('runn-api-client');
 
 /**

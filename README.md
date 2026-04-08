@@ -94,6 +94,13 @@ npm run dev:local
 | ----------- | -------------------------------------------------------------------------------------------------------------- |
 | **Get All** | Get all contracts, with optional filters: Modified After, Sort By (id / createdAt / updatedAt), Order (asc / desc) |
 
+### Time Offs
+
+| Operation        | Description                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Create Leave** | Create a leave time off for a person. Automatically merges overlapping time offs. Required: Person ID, Start Date, End Date. Optional: Minutes Per Day, Note. |
+| **Get All Leave** | Get all leave time offs, with optional filters: Person ID, Start Date, End Date, Modified After, Sort By, Order.        |
+
 ### Runn Trigger
 
 The trigger node polls the Runn API and fires when records are created, updated, or deleted.
@@ -123,7 +130,7 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 
 1. Add the **Runn** node (or **Runn Trigger**) to your workflow
 2. Configure your Runn API credentials
-3. Select a resource (**Actuals**, **Assignments**, **Clients**, **Contracts**, **People**, or **Projects**)
+3. Select a resource (**Actuals**, **Assignments**, **Clients**, **Contracts**, **People**, **Projects**, or **Time Offs**)
 4. Choose an operation
 5. Fill in the required parameters
 6. Execute the workflow
@@ -138,6 +145,10 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
 
 ## Version history
+
+### 1.0.7
+
+- Added **Time Offs resource** with Create Leave (POST `/time-offs/leave/`) and Get All Leave (GET `/time-offs/leave/`) operations
 
 ### 1.0.6
 
