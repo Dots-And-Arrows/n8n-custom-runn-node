@@ -24,7 +24,8 @@ n8n-nodes-runn-main/
 │       ├── ClientsDescription.ts     clientsOperations + clientsFields
 │       ├── ContractsDescription.ts   contractsOperations + contractsFields
 │       ├── PeopleDescription.ts      peopleOperations + peopleFields
-│       └── ProjectsDescription.ts    projectsOperations + projectsFields
+│       ├── ProjectsDescription.ts    projectsOperations + projectsFields
+│       └── TimeOffsDescription.ts    timeOffsOperations + timeOffsFields
 ├── types/
 │   └── runn-api-client.d.ts          Type declarations for the runn-api-client npm package
 ├── eslint.config.mjs                 ESLint 9 flat config

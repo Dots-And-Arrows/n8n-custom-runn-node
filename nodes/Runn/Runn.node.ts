@@ -35,6 +35,8 @@ import {
   projectsFields,
   peopleOperations,
   peopleFields,
+  timeOffsOperations,
+  timeOffsFields,
 } from "./descriptions";
 
 // Helper: format a date string to YYYY-MM-DD
@@ -155,6 +157,11 @@ export class Runn implements INodeType {
             name: "Projects",
             value: "projects",
           },
+          {
+            // eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+            name: "Time Offs",
+            value: "timeOffs",
+          },
         ],
         default: "people",
       },
@@ -170,6 +177,8 @@ export class Runn implements INodeType {
       ...projectsFields,
       ...peopleOperations,
       ...peopleFields,
+      ...timeOffsOperations,
+      ...timeOffsFields,
     ],
   };
 
@@ -985,6 +994,86 @@ export class Runn implements INodeType {
                 throw error;
               }
             }
+          }
+
+          // ============================================================
+          //                        TIME OFFS
+          // ============================================================
+        } else if (resource === "timeOffs") {
+          if (operation === "createLeave") {
+            const personId = this.getNodeParameter("personId", i) as number;
+            const startDate = formatDate(
+              this.getNodeParameter("startDate", i) as string,
+            );
+            const endDate = formatDate(
+              this.getNodeParameter("endDate", i) as string,
+            );
+            const note = this.getNodeParameter("note", i) as string;
+            const minutesPerDay = this.getNodeParameter(
+              "minutesPerDay",
+              i,
+            ) as number;
+            const dryRun = this.getNodeParameter("dryRun", i) as boolean;
+
+            if (dryRun) {
+              responseData = { success: true, dry_run: true };
+            } else {
+              const body = {
+                personId,
+                startDate,
+                endDate,
+                ...(note ? { note } : {}),
+                ...(minutesPerDay ? { minutesPerDay } : {}),
+              };
+              try {
+                responseData = await runnApi.executeRunnApiPOST(
+                  "/time-offs/leave/",
+                  body,
+                );
+              } catch (error) {
+                if (error.response) {
+                  throw new NodeOperationError(
+                    this.getNode(),
+                    error.response.data?.message ?? error.message,
+                    { description: error.response.status },
+                  );
+                }
+                throw error;
+              }
+            }
+          } else if (operation === "fetchAllLeave") {
+            const additionalFields = this.getNodeParameter(
+              "additionalFields",
+              i,
+            ) as IDataObject;
+            const personId = additionalFields.personId as number | undefined;
+            const startDate = additionalFields.startDate
+              ? formatDate(additionalFields.startDate as string)
+              : "";
+            const endDate = additionalFields.endDate
+              ? formatDate(additionalFields.endDate as string)
+              : "";
+            const modifiedAfter = additionalFields.modifiedAfter as
+              | string
+              | undefined;
+            const sortBy = (additionalFields.sortBy as string) || "id";
+            const order = (additionalFields.order as string) || "asc";
+
+            const urlParams = {
+              sortBy,
+              order,
+              ...(personId ? { personId } : {}),
+              ...(startDate ? { startDate } : {}),
+              ...(endDate ? { endDate } : {}),
+              ...(modifiedAfter
+                ? { modifiedAfter: new Date(modifiedAfter).toISOString() }
+                : {}),
+            };
+
+            responseData = await runnApi.executeRunnApiGET(
+              "/time-offs/leave/",
+              { urlParams },
+            );
           }
         }
 

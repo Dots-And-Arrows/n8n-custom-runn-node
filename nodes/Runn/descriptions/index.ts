@@ -6,3 +6,4 @@ export * from './ClientsDescription';
 export * from './ContractsDescription';
 export * from './PeopleDescription';
 export * from './ProjectsDescription';
+export * from './TimeOffsDescription';
