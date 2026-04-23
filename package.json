@@ -11,9 +11,9 @@
     "integration"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/Dots-And-Arrows/n8n-custom-runn-node",
   "author": {
-    "name": "Niel Stroobants",
+    "name": "Dots & Arrows",
     "email": "niel.stroobants@dotsandarrows.eu"
   },
   "repository": {
