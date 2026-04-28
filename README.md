@@ -1,4 +1,4 @@
-# n8n-nodes-runn
+# n8n-nodes-runn-dotsandarrows
 
 This is an n8n community node. It lets you use the **Runn** API in your n8n workflows.
 
@@ -143,6 +143,10 @@ The node authenticates using a `Bearer` token in the `Authorization` header.
 - [Runn API documentation](https://developer.runn.io/reference/)
 - [How to generate a Runn API token](https://help.runn.io/en/articles/7039247-how-to-generate-an-api-token-in-runn)
 - [GitHub repository](https://github.com/Dots-And-Arrows/n8n-custom-runn-node)
+
+## Attribution
+
+This project is based on [n8n-nodes-runn](https://github.com/itspoma/n8n-nodes-runn) by Roman Rodomansky @ Ralabs, which is in turn based on the n8n community node starter template. Both are released under the MIT License. This package extends the original with additional resources, operations, and improvements.
 
 ## Version history
 
