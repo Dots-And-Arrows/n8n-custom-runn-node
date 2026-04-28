@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'runn-api-client' {
   interface RunnApiClientOptions {
     logLevel?: string;
