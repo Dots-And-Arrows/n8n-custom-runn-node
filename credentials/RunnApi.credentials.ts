@@ -1,4 +1,4 @@
-import type { ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { IAuthenticate, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class RunnApi implements ICredentialType {
 	name = 'runnApi';
@@ -18,6 +18,18 @@ export class RunnApi implements ICredentialType {
 			description: 'Your Runn API key. Generate one in Runn under Settings → API.',
 		},
 	];
+
+	// Injects the Bearer token into every request made via httpRequestWithAuthentication
+	authenticate: IAuthenticate = {
+		type: 'generic',
+		properties: {
+			headers: {
+				Authorization: '={{ "Bearer " + $credentials.apiKey }}',
+				accept: 'application/json',
+				'accept-version': '1.0.0',
+			},
+		},
+	};
 
 	// When a user saves credentials in n8n, this request is made to verify
 	// the API key is valid. A 200 response shows the green "connection tested" badge.

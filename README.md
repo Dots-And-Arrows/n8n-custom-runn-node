@@ -150,6 +150,12 @@ This project is based on [n8n-nodes-runn](https://github.com/itspoma/n8n-nodes-r
 
 ## Version history
 
+### 1.0.8
+
+- Replaced `runn-api-client` npm dependency with n8n's built-in `httpRequestWithAuthentication` helper — removes the external dependency that blocked n8n Cloud vetting
+- Converted trigger node from `setInterval`-based polling to n8n's native `polling: true` + `poll()` pattern
+- Added `authenticate` property to credentials so auth headers are injected automatically by n8n
+
 ### 1.0.7
 
 - Added **Time Offs resource** with Create Leave (POST `/time-offs/leave/`) and Get All Leave (GET `/time-offs/leave/`) operations

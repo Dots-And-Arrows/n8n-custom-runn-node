@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-runn-dotsandarrows",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Runn.io integration for n8n",
   "keywords": [
     "n8n-community-node-package",
@@ -49,7 +49,5 @@
   "peerDependencies": {
     "n8n-workflow": "*"
   },
-  "dependencies": {
-    "runn-api-client": "^1.1.4"
-  }
+  "dependencies": {}
 }
