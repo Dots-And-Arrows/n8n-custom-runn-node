@@ -150,6 +150,11 @@ This project is based on [n8n-nodes-runn](https://github.com/itspoma/n8n-nodes-r
 
 ## Version history
 
+### 1.0.9
+
+- Wrapped raw HTTP errors in `NodeApiError` so status codes and response bodies surface correctly in the n8n UI
+- Renamed resource options to singular: Actual, Assignment, Client, Contract, Person, Project, Time Off
+
 ### 1.0.8
 
 - Replaced `runn-api-client` npm dependency with n8n's built-in `httpRequestWithAuthentication` helper — removes the external dependency that blocked n8n Cloud vetting
